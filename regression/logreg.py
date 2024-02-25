@@ -129,7 +129,7 @@ class LogisticRegressor(BaseRegressor):
         Returns: 
             The predicted labels (y_pred) for given X.
         """
-        y_pred = 1 /(1 + np.exp( X  )) # fit to sigmoid (  )
+        y_pred = 1 /(1 + np.exp( X  )) # fit to sigmoid (sigmoid function is \frac{1}{1 + e^{-x} }   )
         print(y_pred)
         return y_pred 
     
