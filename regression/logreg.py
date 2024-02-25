@@ -133,13 +133,14 @@ class LogisticRegressor(BaseRegressor):
         # \frac{1}{1 + e^{- k \cdot (x - x_0 ) } } 
         # X is already given in matrix form 
         print("shape of X matrix:", X.shape)
-        k = self.W # k are the weights in matrix form 
+        k = self.W.T # k are the weights in matrix form 
         print("shape of k:", k.shape)
-        X_0 = 0 
-        k_2 = np.ones_like(k)*2
-        y_pred = 1 /(1 + np.exp( - k * (X- X_0)  )) # fit to sigmoid 
+        X_0 = np.zeros_like(X)
+        y_pred = 1 /(1 + np.exp( - X @ k  )) # fit to sigmoid 
         print("shape of y_pred", y_pred.shape)
         print(y_pred)
+
+        k_2 = np.ones_like(k)*2
         y_pred2 = 1 /(1 + np.exp( - k_2 * (X- X_0)  ))
         print(y_pred2)
         return y_pred 
