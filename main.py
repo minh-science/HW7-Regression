@@ -35,6 +35,14 @@ def main():
 
     # For testing purposes, once you've added your code.
     # CAUTION: hyperparameters have not been optimized.
+    
+    # EDIT
+    print("X_train shape", X_train.shape)
+    print("y_train shape", y_train.shape)
+    print("X_val shape", X_val.shape)
+    print("y_val shape", y_val.shape)
+    # end EDIT
+
     log_model = logreg.LogisticRegressor(num_feats=6, learning_rate=0.00001, tol=0.01, max_iter=10, batch_size=10)
     log_model.train_model(X_train, y_train, X_val, y_val)
     # log_model.plot_loss_history()

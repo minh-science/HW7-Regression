@@ -160,10 +160,11 @@ class LogisticRegressor(BaseRegressor):
         # binary cross entropy loss equation 
         # - \frac{1}{N} \Sum^N_{i=1} { y_i \cdot \log( p(y_i)) + (1 - y_i) \cdot \log(1 - p(y_i) )   }
         N = len(y_true)
-        y_i = y_pred 
-        P_y_i = np.log(y_pred)
+        y_i = y_true # true labels
+        P_yi = y_pred # probability of predicted labels
         
-        mean_loss = -1/N * np.sum( y_i  )
+        mean_loss = -1/N * np.sum( y_i * np.log(P_yi)  )
+        return mean_loss
 
         
     def calculate_gradient(self, y_true, X) -> np.ndarray:
