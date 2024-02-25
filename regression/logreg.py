@@ -129,8 +129,19 @@ class LogisticRegressor(BaseRegressor):
         Returns: 
             The predicted labels (y_pred) for given X.
         """
-        y_pred = 1 /(1 + np.exp( X  )) # fit to sigmoid (sigmoid function is \frac{1}{1 + e^{-x} }   )
+        # sigmoid function: 
+        # \frac{1}{1 + e^{- k \cdot (x - x_0 ) } } 
+        # X is already given in matrix form 
+        print("shape of X matrix:", X.shape)
+        k = self.W # k are the weights in matrix form 
+        print("shape of k:", k.shape)
+        X_0 = 0 
+        k_2 = np.ones_like(k)*2
+        y_pred = 1 /(1 + np.exp( - k * (X- X_0)  )) # fit to sigmoid 
+        print("shape of y_pred", y_pred.shape)
         print(y_pred)
+        y_pred2 = 1 /(1 + np.exp( - k_2 * (X- X_0)  ))
+        print(y_pred2)
         return y_pred 
     
     def loss_function(self, y_true, y_pred) -> float:
@@ -145,7 +156,14 @@ class LogisticRegressor(BaseRegressor):
         Returns: 
             The mean loss (a single number).
         """
-        pass
+        # binary cross entropy loss equation 
+        # - \frac{1}{N} \Sum^N_{i=1} { y_i \cdot \log( p(y_i)) + (1 - y_i) \cdot \log(1 - p(y_i) )   }
+        N = len(y_true)
+        y_i = y_pred 
+        P_y_i = np.log(y_pred)
+        
+        mean_loss = -1/N * np.sum( y_i  )
+
         
     def calculate_gradient(self, y_true, X) -> np.ndarray:
         """
