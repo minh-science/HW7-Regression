@@ -129,7 +129,9 @@ class LogisticRegressor(BaseRegressor):
         Returns: 
             The predicted labels (y_pred) for given X.
         """
-        pass
+        y_pred = 1 /(1 + np.exp( X  )) # fit to sigmoid (  )
+        print(y_pred)
+        return y_pred 
     
     def loss_function(self, y_true, y_pred) -> float:
         """
