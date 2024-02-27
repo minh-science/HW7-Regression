@@ -132,17 +132,10 @@ class LogisticRegressor(BaseRegressor):
         # sigmoid function: 
         # \frac{1}{1 + e^{- k \cdot (x - x_0 ) } } 
         # X is already given in matrix form 
-        print("shape of X matrix:", X.shape)
         k = self.W.T # k are the weights in matrix form 
-        print("shape of k:", k.shape)
         X_0 = np.zeros_like(X)
+        
         y_pred = 1 /(1 + np.exp( - X @ k  )) # fit to sigmoid 
-        print("shape of y_pred", y_pred.shape)
-        print(y_pred)
-
-        k_2 = np.ones_like(k)*2
-        y_pred2 = 1 /(1 + np.exp( - k_2 * (X- X_0)  ))
-        print(y_pred2)
         return y_pred 
     
     def loss_function(self, y_true, y_pred) -> float:
@@ -162,8 +155,9 @@ class LogisticRegressor(BaseRegressor):
         N = len(y_true)
         y_i = y_true # true labels
         P_yi = y_pred # probability of predicted labels
+        y_i_length = y_true.shape[0] # size of true lables 
         
-        mean_loss = -1/N * np.sum( y_i * np.log(P_yi)  )
+        mean_loss = -1/N * np.sum( y_i * np.log(P_yi) + (1 - y_i) * np.log(1 - P_yi)) / y_i_length
         return mean_loss
 
         
@@ -179,4 +173,12 @@ class LogisticRegressor(BaseRegressor):
         Returns: 
             Vector of gradients.
         """
-        pass
+        # grad here 
+        # calculate gradient (https://web.stanford.edu/~jurafsky/slp3/5.pdf#page=22&zoom=100,189,596)
+        # \frac{ \partial L }{\partial w } = \sigma( w * x  - y_i ) * x_j 
+        gradient_array = [] # gradient as array
+        for i in range(self.W.shape[0]):
+            sigmoid = 1/(1+np.exp( np.matmul(X, self.W.T) )) # sigmoid function like self.make_prediction
+            grad_i = np.matmul( X[:, i],   sigmoid - y_true  )
+            gradient_array.append(grad_i)
+        return np.array(gradient_array) / y_true.shape[0]
