@@ -134,10 +134,10 @@ class LogisticRegressor(BaseRegressor):
         # X the training set, is already given in matrix form 
         k = self.W.T # k are the weights in matrix form 
         y_pred = 1 /(1 + np.exp( - np.matmul( X, k ) ) ) # fit to sigmoid 
-        # return y_pred 
+        return y_pred 
     
         # solution 2
-        z = np.dot(X, self.W) + self.W[-1]
+        z = np.dot(X, self.W) #+ self.W[-1]
         return 1 / (1 + np.exp(-z))
     
     def loss_function(self, y_true, y_pred) -> float:
@@ -157,14 +157,9 @@ class LogisticRegressor(BaseRegressor):
         N = len(y_true) # number of instances 
         y_i = y_true # true labels
         P_yi = y_pred # probability of predicted labels, y_pred is also called y_hat
-        
-        mean_loss = -1/N * np.sum( y_i * np.log(P_yi) + (1 - y_i) * np.log(1 - P_yi)) 
-        # return mean_loss
-
-        #solution 2
         epsilon = 1e-15  # small constant to avoid log(0)
-        loss = - (y_true * np.log(y_pred + epsilon) + (1 - y_true) * np.log(1 - y_pred + epsilon))
-        return np.mean(loss)
+        mean_loss = -1/N * np.sum( y_i * np.log(y_pred) + (1 - y_i) * np.log(1 - y_pred)) 
+        return mean_loss
 
         
     def calculate_gradient(self, y_true, X) -> np.ndarray:
@@ -185,16 +180,16 @@ class LogisticRegressor(BaseRegressor):
         gradient_array = [] # gradient as array
         sigmoid = self.make_prediction(X)
         gradient = np.matmul(X.T, sigmoid - y_true) / len(y_true)
-        # for i in range(self.W.shape[0]):
-        #     sigmoid = 1/(1+np.exp( np.matmul(X, self.W.T) )) # sigmoid function like self.make_prediction
-        #     grad_i = np.matmul( X[:, i],   sigmoid - y_true  )
-        #     gradient_array.append(grad_i)
-        # return np.array(gradient_array) / y_true.shape[0]
+        for i in range(self.W.shape[0]):
+            sigmoid = 1/(1+np.exp( np.matmul(X, self.W.T) )) # sigmoid function like self.make_prediction
+            grad_i = np.matmul( X[:, i],   sigmoid - y_true  )
+            gradient_array.append(grad_i)
+        return np.array(gradient_array) / y_true.shape[0]
 
-        # return gradient
+        return gradient
 
-        m = len(y_true)
-        y_pred = self.make_prediction(X)
-        error = y_pred - y_true
-        grad = np.dot(X.T, error) / m
-        return grad
+        # m = len(y_true)
+        # y_pred = self.make_prediction(X)
+        # error = y_pred - y_true
+        # grad = np.dot(X.T, error) / m
+        # return grad

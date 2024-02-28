@@ -11,27 +11,69 @@ This is not an exhaustive list.
 # Imports
 import pytest
 # (you will probably need to import more things here)
-from regression import logreg
+from regression import (logreg, utils)
+from sklearn.preprocessing import StandardScaler
 import numpy as np
 
-from sklearn.datasets import load_iris
-from sklearn.linear_model import LogisticRegression
-X, y = load_iris(return_X_y=True)
-clf = LogisticRegression(random_state=0, max_iter=1000).fit(X, y)
-sk_prediction = clf.predict(X[:2, :])
-sk_prob_predict = clf.predict_proba(X[:2, :])
-print(clf.score(X, y))
 
-regresssor = logreg.LogisticRegressor(num_feats=3)
+
+from sklearn.metrics import accuracy_score, log_loss
 
 def test_prediction():
-	print( regresssor.make_prediction(X = X ))
-	print( sk_prob_predict )
+	# code from main.py
+	X_train, X_val, y_train, y_val = utils.loadDataset(
+		features=[
+			'Penicillin V Potassium 500 MG',
+			'Computed tomography of chest and abdomen',
+			'Plain chest X-ray (procedure)',
+			'Low Density Lipoprotein Cholesterol',
+			'Creatinine',
+			'AGE_DIAGNOSIS'
+		],
+		split_percent=0.8,
+		split_seed=42
+	)
+	sc = StandardScaler()
+	X_train = sc.fit_transform(X_train)
+	X_val = sc.transform(X_val)
+	log_model = logreg.LogisticRegressor(num_feats=6, learning_rate=0.00001, tol=0.01, max_iter=10, batch_size=10)
+	# end code from main.py
 
+	# create new training set and weights with known true values
+	X_pytest=np.array([[1,1,1],[2,2,2],[1,1,1]])
+	W_pytest = np.array([1,2,3])
+	prediction_truth = [0.99752738, 0.99999386, 0.99752738]
+
+	# replace training set and weights 
+	log_model.W = W_pytest
+	prediction_pytest = log_model.make_prediction(X_pytest)
+
+	# assert that prediction is equal to true values 
+	for i in range(len(prediction_pytest)):
+		assert np.isclose( prediction_pytest[i], prediction_truth[i], 0.0000001)
 test_prediction()
 
 def test_loss_function():
-	pass
+	# code from main.py
+	X_train, X_val, y_train, y_val = utils.loadDataset(
+		features=[
+			'Penicillin V Potassium 500 MG',
+			'Computed tomography of chest and abdomen',
+			'Plain chest X-ray (procedure)',
+			'Low Density Lipoprotein Cholesterol',
+			'Creatinine',
+			'AGE_DIAGNOSIS'
+		],
+		split_percent=0.8,
+		split_seed=42
+	)
+	sc = StandardScaler()
+	X_train = sc.fit_transform(X_train)
+	X_val = sc.transform(X_val)
+	log_model = logreg.LogisticRegressor(num_feats=6, learning_rate=0.00001, tol=0.01, max_iter=10, batch_size=10)
+	# end code from main.py
+
+	
 
 def test_gradient():
 	pass
