@@ -73,7 +73,14 @@ def test_loss_function():
 	log_model = logreg.LogisticRegressor(num_feats=6, learning_rate=0.00001, tol=0.01, max_iter=10, batch_size=10)
 	# end code from main.py
 
-	
+	y_true_pytest = np.array([1,2,3])
+	y_pred_pytest = np.array([0.1,0.2,0.3])
+
+	loss_truth = 2.7322952972161265
+
+	loss_pytest = log_model.loss_function(y_true= y_true_pytest, y_pred=y_pred_pytest) 
+	assert np.isclose(loss_truth, loss_pytest, 0.000001)
+test_loss_function()
 
 def test_gradient():
 	pass
