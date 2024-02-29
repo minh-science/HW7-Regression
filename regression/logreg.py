@@ -180,13 +180,12 @@ class LogisticRegressor(BaseRegressor):
         gradient_array = [] # gradient as array
         sigmoid = self.make_prediction(X)
         gradient = np.matmul(X.T, sigmoid - y_true) / len(y_true)
-        for i in range(self.W.shape[0]):
-            sigmoid = 1/(1+np.exp( np.matmul(X, self.W.T) )) # sigmoid function like self.make_prediction
-            grad_i = np.matmul( X[:, i],   sigmoid - y_true  )
-            gradient_array.append(grad_i)
-        return np.array(gradient_array) / y_true.shape[0]
-
+        # for i in range(self.W.shape[0]):
+        #     sigmoid = 1/(1+np.exp( np.matmul(X, self.W.T) )) # sigmoid function like self.make_prediction
+        #     grad_i = np.matmul( X[:, i],   sigmoid - y_true  )
+        #     gradient_array.append(grad_i)
         return gradient
+
 
         # m = len(y_true)
         # y_pred = self.make_prediction(X)

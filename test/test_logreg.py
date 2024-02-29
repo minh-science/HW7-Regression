@@ -15,8 +15,6 @@ from regression import (logreg, utils)
 from sklearn.preprocessing import StandardScaler
 import numpy as np
 
-
-
 from sklearn.metrics import accuracy_score, log_loss
 
 def test_prediction():
@@ -83,7 +81,38 @@ def test_loss_function():
 test_loss_function()
 
 def test_gradient():
-	pass
+	# code from main.py
+	X_train, X_val, y_train, y_val = utils.loadDataset(
+		features=[
+			'Penicillin V Potassium 500 MG',
+			'Computed tomography of chest and abdomen',
+			'Plain chest X-ray (procedure)',
+			'Low Density Lipoprotein Cholesterol',
+			'Creatinine',
+			'AGE_DIAGNOSIS'
+		],
+		split_percent=0.8,
+		split_seed=42
+	)
+	sc = StandardScaler()
+	X_train = sc.fit_transform(X_train)
+	X_val = sc.transform(X_val)
+	log_model = logreg.LogisticRegressor(num_feats=6, learning_rate=0.00001, tol=0.01, max_iter=10, batch_size=10)
+	# end code from main.py
+
+	W_pytest = np.array([1,2,3])
+	log_model.W = W_pytest
+
+	X_pytest=np.array([[1,2,3],[4,5,6],[7,8,9]])
+	y_true_pytest = np.array([3,2,1])
+
+	gradient_truth = [-2.00000028, -3.00000055, -4.00000083]
+	gradient_pytest = log_model.calculate_gradient(X= X_pytest, y_true= y_true_pytest )
+
+	for i in range(len(gradient_truth)):
+		assert np.isclose(gradient_truth[i], gradient_pytest[i], 0.000001)
+
+test_gradient()
 
 def test_training():
 	pass
