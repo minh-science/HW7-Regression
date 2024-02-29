@@ -71,11 +71,12 @@ def test_loss_function():
 	log_model = logreg.LogisticRegressor(num_feats=6, learning_rate=0.00001, tol=0.01, max_iter=10, batch_size=10)
 	# end code from main.py
 
+	# create new y and y_hat with a known loss function value
 	y_true_pytest = np.array([1,2,3])
 	y_pred_pytest = np.array([0.1,0.2,0.3])
-
 	loss_truth = 2.7322952972161265
 
+	# check if loss function returns values close to true values 
 	loss_pytest = log_model.loss_function(y_true= y_true_pytest, y_pred=y_pred_pytest) 
 	assert np.isclose(loss_truth, loss_pytest, 0.000001)
 test_loss_function()
@@ -100,19 +101,53 @@ def test_gradient():
 	log_model = logreg.LogisticRegressor(num_feats=6, learning_rate=0.00001, tol=0.01, max_iter=10, batch_size=10)
 	# end code from main.py
 
+	# create new weights, X, and y values with known gradient values
 	W_pytest = np.array([1,2,3])
 	log_model.W = W_pytest
-
 	X_pytest=np.array([[1,2,3],[4,5,6],[7,8,9]])
 	y_true_pytest = np.array([3,2,1])
-
 	gradient_truth = [-2.00000028, -3.00000055, -4.00000083]
+
 	gradient_pytest = log_model.calculate_gradient(X= X_pytest, y_true= y_true_pytest )
 
+	# check if gradient produces results that match true values 
 	for i in range(len(gradient_truth)):
 		assert np.isclose(gradient_truth[i], gradient_pytest[i], 0.000001)
 
 test_gradient()
 
 def test_training():
-	pass
+	# code from main.py
+	X_train, X_val, y_train, y_val = utils.loadDataset(
+		features=[
+			'Penicillin V Potassium 500 MG',
+			'Computed tomography of chest and abdomen',
+			'Plain chest X-ray (procedure)',
+			'Low Density Lipoprotein Cholesterol',
+			'Creatinine',
+			'AGE_DIAGNOSIS'
+		],
+		split_percent=0.8,
+		split_seed=42
+	)
+	sc = StandardScaler()
+	X_train = sc.fit_transform(X_train)
+	X_val = sc.transform(X_val)
+	log_model = logreg.LogisticRegressor(num_feats=6, learning_rate=0.00001, tol=0.01, max_iter=10, batch_size=10)
+	# end code from main.py
+
+	# get initial weights (should be random)
+	W_initial = log_model.W
+
+	# train model and get final weights
+	log_model.train_model(X_train, y_train, X_val, y_val)
+	W_final = log_model.W
+
+	# assert that at least one of the values in the weights changed after training 
+	compare_W = []
+	for i in range(len(W_final)):
+		compare_W.append( np.isclose(W_initial[i], W_final[i]) )
+	assert False in compare_W
+
+test_training()
+	
