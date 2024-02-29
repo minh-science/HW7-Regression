@@ -2,6 +2,11 @@
 
 In this assignment, you'll implement a classifier using logistic regression, optimized with gradient descent.
 
+# Description of methods 
+- `make_prediction` uses the logistic function to classify values in X into two binary classes. 
+- `loss_function` applies binary cross-entropy loss to calculate the difference between predicted labels and true labels 
+- `calculate_gradient` calculates the gradient of the sigmoid function 
+
 ## Overview
 
 In class, we went over an implementation of linear regression using gradient descent. For this homework, you will be implementing a logistic regression model using the same framework. Logistic regression is useful for binary classification because the [sigmoid function](https://en.wikipedia.org/wiki/Sigmoid_function) outputs a value between 0 and 1.

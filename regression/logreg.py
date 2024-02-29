@@ -130,9 +130,13 @@ class LogisticRegressor(BaseRegressor):
             The predicted labels (y_pred) for given X.
         """
         # sigmoid function: 
-        # \frac{1}{1 + e^{- k \cdot (x - x_0 ) } } 
-        # X the training set, is already given in matrix form 
-        k = self.W.T # k are the weights in matrix form 
+        # \sigma(z) = \frac{1}{1 + e^{- z} } 
+        # z = k * x 
+
+        # k is the transposed matrix of weights
+        k = self.W.T 
+
+        # applies weights to X and fits to sigmoid 
         y_pred = 1 /(1 + np.exp( - np.matmul( X, k ) ) ) # fit to sigmoid 
         return y_pred 
     
@@ -149,16 +153,20 @@ class LogisticRegressor(BaseRegressor):
             The mean loss (a single number).
         """
         # binary cross entropy loss equation 
-        # - \frac{1}{N} \Sum^N_{i=1} { y_i \cdot \log( p(y_i)) + (1 - y_i) \cdot \log(1 - p(y_i) )   }
+        # binary cross entropy loss = - \frac{1}{N} \Sum^N_{i=1} { y_i * \log( p(y_i)) + (1 - y_i) * \log(1 - p(y_i) )   }
+        # y_i = y_true, p(y_i) = y_pred
         N = len(y_true) # number of instances 
-        y_i = y_true # true labels
+        
+        # edit values of y_pred to prevent divide by zero error
         epsilon = 1e-15  # small constant to avoid log(0)
         for i in range(len(y_pred)):
             if y_pred[i] == 1:
                 y_pred[i] -= epsilon
             if y_pred[i] == 0:
                 y_pred[i] += epsilon
-        mean_loss = -1/N * np.sum( y_i * np.log(y_pred) + (1 - y_i) * np.log(1 - y_pred)) 
+
+        # mean loss using binary cross entropy loss equation 
+        mean_loss = -1/N * np.sum( y_true * np.log(y_pred) + (1 - y_true) * np.log(1 - y_pred)) 
         return mean_loss
 
         
@@ -174,9 +182,8 @@ class LogisticRegressor(BaseRegressor):
         Returns: 
             Vector of gradients.
         """
-        # grad here 
         # calculate gradient (https://web.stanford.edu/~jurafsky/slp3/5.pdf#page=22&zoom=100,189,596)
-        # \frac{ \partial L }{\partial w } = \sigma( w * x  - y_i ) * x_j 
+        # gradient = \frac{ \partial L }{\partial w } = \sigma( w * x  - y_i ) * x_j 
         sigmoid = self.make_prediction(X)
         gradient = np.matmul(X.T, sigmoid - y_true) / len(y_true)
         return gradient
